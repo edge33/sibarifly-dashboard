@@ -1,6 +1,6 @@
 FROM node:26.13.0-slim@sha256:5adad64f9a1fca2d51972caa65983634c8a774eb300d72b20f7f2a0f60368072 AS base
 RUN apt-get update && apt-get install -y openssl git
-RUN npm install -g pnpm@12.16.1
+RUN npm install -g pnpm@12.18.0
 
 FROM base AS prod-deps
 COPY . /app
