@@ -11,7 +11,7 @@ steps:
     args:
       - -ec
       - |
-        npm install -g pnpm@12.16.1
+        npm install -g pnpm@12.18.0
         pnpm install --frozen-lockfile
         pnpm prisma-generate
         pnpm lint
