@@ -13,13 +13,14 @@
     "prisma-generate": "prisma generate",
     "prisma-migrate": "prisma migrate deploy",
     "lint": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "biome:migrate": "biome migrate --write"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@biomejs/biome": "^2.6.2",
+    "@biomejs/biome": "^2.6.6",
     "@fastify/swagger": "^9.9.2",
     "@fastify/swagger-ui": "^6.1.2",
     "@types/node": "^26.0.0",
