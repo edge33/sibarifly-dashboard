@@ -1,6 +1,6 @@
 # Monorepo migration tracker
 
-Status: PR 3 local implementation and validation complete on `refactor/local-ui-deployment`, based on `f1857ec`. Docker now builds API/UI from the local workspace. Publication authorized and being prepared. Final reconciliation window, rollback digest capture, deployment validation, and external repository retirement remain pending. Deployed pipelines remain unchanged until merge.
+Status: PR 3 local implementation and validation complete on `refactor/local-ui-deployment`, based on `f1857ec`. Docker now builds API/UI from the local workspace. Published as PR #97 (implementation `a2e510b`). Final reconciliation window, rollback digest capture, deployment validation, and external repository retirement remain pending. Deployed pipelines remain unchanged until merge.
 
 ## Objective and agreed decisions
 
@@ -580,3 +580,9 @@ Historical repair attempt; superseded by the authorized reconstruction below.
 - Pushing the PR branch triggers PR checks. The configured development deployment
   triggers on merge to `main`; opening the PR alone does not deploy it. Merge and
   actual development validation remain pending.
+
+- Published implementation commit: `a2e510b` on
+  `origin/refactor/local-ui-deployment`.
+- PR: https://github.com/edge33/sibarifly-dashboard-api/pull/97, opened against
+  `main` with the `feat:` title above. Hosted checks were requested automatically;
+  development deployment remains pending merge.
