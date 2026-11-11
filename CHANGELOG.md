@@ -3,6 +3,13 @@
 Release Please maintains this file from Conventional Commits merged into `main`.
 Breaking changes and database deployment requirements must be described in release PRs.
 
+## [1.4.1](https://github.com/edge33/sibarifly-dashboard/compare/v1.4.0...v1.4.1) (2026-11-11)
+
+
+### Bug Fixes
+
+* replace direct dotenv usage with native env loading ([#100](https://github.com/edge33/sibarifly-dashboard/issues/100)) ([923e3fb](https://github.com/edge33/sibarifly-dashboard/commit/923e3fb93efd46ea1b71765820da1bc4de853c06))
+
 ## [1.4.0](https://github.com/edge33/sibarifly-dashboard-api/compare/v1.3.0...v1.4.0) (2026-11-11)
 
 
