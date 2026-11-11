@@ -29,3 +29,8 @@ jobs:
 
       - name: Test with coverage
         run: pnpm test:coverage
+
+      - name: Build UI
+        run: pnpm build:web
+        env:
+          VITE_API_URL: /api

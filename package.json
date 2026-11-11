@@ -11,9 +11,13 @@
     "typecheck": "pnpm --filter sibarifly-dashboard-api typecheck",
     "prisma-generate": "pnpm --filter sibarifly-dashboard-api prisma-generate",
     "prisma-migrate": "pnpm --filter sibarifly-dashboard-api prisma-migrate",
-    "lint": "biome check .",
+    "lint": "biome check . --error-on-warnings",
     "format": "biome format --write .",
-    "biome:migrate": "biome migrate --write"
+    "biome:migrate": "biome migrate --write",
+    "dev:web": "pnpm --filter pilots-log dev",
+    "dev:all": "pnpm --parallel --filter sibarifly-dashboard-api --filter pilots-log dev",
+    "build:web": "pnpm --filter pilots-log build",
+    "lint:web": "pnpm --filter pilots-log lint"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.6",

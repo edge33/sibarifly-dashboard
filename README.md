@@ -9,11 +9,13 @@ workspace. Biome and TypeScript are shared development tools installed at the
 root; application dependencies, Prisma configuration, and environment files live
 in `apps/api`. Run the commands below from the repository root.
 
-The UI remains in [sibarifly-landing-form](https://github.com/edge33/sibarifly-landing-form).
-Docker still fetches its `develop` branch for development and `main` for production.
-The API workspace move does not change that deployment behavior. See
-[the migration tracker](MONOREPO-MIGRATION.md) for the subsequent UI import and
-deployment cutover PRs.
+The React UI is imported with its original history in `apps/web`. Docker still
+fetches [sibarifly-landing-form](https://github.com/edge33/sibarifly-landing-form):
+`develop` for development and `main` for production. Until PR 3 switches deployment
+to the local UI, make deployable UI changes in that external repository and avoid
+editing both copies. PR 3 will reconcile commits after the import revision
+`60f8bea84cf32e04149abe8add9afd0d0737c45d`. See
+[the migration tracker](MONOREPO-MIGRATION.md) for import evidence and cutover gates.
 
 ## Local development
 
@@ -22,8 +24,9 @@ Use Node `26.13.0` from `.nvmrc` and pnpm `12.18.0` from `package.json`.
 ```sh
 pnpm install --frozen-lockfile
 cp apps/api/.env.sample apps/api/.env
+cp apps/web/.env.sample apps/web/.env
 pnpm prisma-generate
-pnpm dev
+pnpm dev:all
 ```
 
 Configure `apps/api/.env` for your local environment before starting the API.
@@ -31,10 +34,20 @@ For an existing checkout, move your previous root `.env` into `apps/api/.env`.
 The existing `pnpm dev:debug` command and VS Code launch configurations still work.
 Prisma loads `apps/api/.env`; migrations require `DIRECT_URL` or `DATABASE_URL`.
 
-Root scripts forward application commands to the API package, using `apps/api`
-as the working directory. `pnpm lint` and `pnpm format` cover repository files;
-the API has its own Biome configuration extending the root defaults. To execute
-another API-specific command, use `pnpm --filter sibarifly-dashboard-api exec <command>`.
+`pnpm dev` starts just the API on port 8000; `pnpm dev:web` starts just Vite on
+port 3000; `pnpm dev:all` starts both. Open <http://localhost:3000> and keep
+`VITE_API_URL=/api` in `apps/web/.env`. Vite proxies `/api` to the API on port
+8000, including authentication cookies. `VITE_API_URL=/api pnpm build:web`
+typechecks and builds the UI into `apps/web/dist` for local verification.
+
+`pnpm lint` checks repository, API, and UI files with their respective Biome
+settings. `pnpm lint:web` runs UI lint alone. `pnpm format` formats all scopes
+with those same settings; the UI retains its original rules and formatting.
+`pnpm typecheck`, `pnpm test`, and Prisma scripts continue to target the API.
+To execute another app-specific command, use
+`pnpm --filter sibarifly-dashboard-api exec <command>` or
+`pnpm --filter pilots-log <script>`. Install from the root only; both apps share
+one lockfile, TypeScript, Biome, and the root toolchain pins.
 
 ## Local verification
 
@@ -52,6 +65,7 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm test:coverage
+VITE_API_URL=/api pnpm build:web
 ```
 
 Tests load `apps/api/.env.test`. Existing unit tests mock Prisma; use the local
@@ -96,10 +110,13 @@ builds the release image using the latest frontend `main`, runs production migra
 and deploys to production.
 A GitHub release records a version; check Cloud Build for actual deployment status.
 
-Use Conventional Commit squash-merge titles: `fix:` for patches, `feat:` for
+Use Conventional Commit PR titles: `fix:` for patches, `feat:` for
 features, and `!` or a `BREAKING CHANGE:` footer for breaking API changes. Other
-commit types do not normally create releases. Review generated release notes and
-include database migration requirements before merging. Never overwrite release
+commit types do not normally create releases. The UI history import PR must use a
+**merge commit**, preserving original ancestry; do not squash or rebase it.
+The usual squash-merge workflow can resume for later PRs without history imports.
+Review generated release notes and include database migration requirements before
+merging. Never overwrite release
 tags. The initial manifest uses the existing `1.0.0` package version as a baseline;
 `bootstrap-sha` excludes earlier repository history from the first release.
 
@@ -110,14 +127,16 @@ tags. The initial manifest uses the existing `1.0.0` package version as a baseli
    `RELEASE_PLEASE_TOKEN`. A GitHub App installation token with equivalent access
    can replace it later. Do not use `GITHUB_TOKEN`: bot-created release PRs must
    trigger the existing PR checks. Set an expiry and rotate the credential.
-2. Require PR checks and Conventional Commit squash-merge titles on `main`.
+2. Require PR checks and Conventional Commit PR titles on `main`.
+   Allow merge commits for history import PRs.
    Permit the release identity to create PRs, labels, tags, and releases without
    bypassing PR review. GitHub Actions needs permission to create pull requests
    if the repository's Actions settings restrict that capability.
 3. Merge this configuration. Release Please will manage root `package.json`,
-   `apps/api/package.json`, `.release-please-manifest.json`, and `CHANGELOG.md`;
-   do not bump them manually. The root release configuration synchronizes the API
-   version through `extra-files`, preserving one version stream and `vX.Y.Z` tags.
+   `apps/api/package.json`, `apps/web/package.json`,
+   `.release-please-manifest.json`, and `CHANGELOG.md`;
+   do not bump them manually. The root release configuration synchronizes both app
+   versions through `extra-files`, preserving one version stream and `vX.Y.Z` tags.
 
 ### Cloud Build setup (required before switching deployments)
 

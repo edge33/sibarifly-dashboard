@@ -17,6 +17,7 @@ steps:
         pnpm lint
         pnpm typecheck
         pnpm test
+        VITE_API_URL=/api pnpm build:web
 
   - id: build
     name: gcr.io/cloud-builders/docker@sha256:91eaff0806a70dc0b3c853191a2da9995b2aa88d9b24196182344a4cef633603
