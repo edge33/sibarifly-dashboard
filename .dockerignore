@@ -6,3 +6,6 @@
 **/dist
 **/.env*
 Makefile
+
+# PR 2: deployed UI still comes from the external repository.
+apps/web

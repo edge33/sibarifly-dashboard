@@ -7,6 +7,6 @@
     "erasableSyntaxOnly": true
   },
 
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "prisma.config.ts"],
   "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts", "node_modules", "dist"]
 }
