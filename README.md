@@ -4,7 +4,7 @@ React 19 + TypeScript application built with Vite 8 and React Compiler.
 
 ## Development
 
-Use Node.js 24 (pinned in `.nvmrc` and used by CI) and pnpm 12.15.0
+Use Node.js 26.13.0 (pinned in `.nvmrc` and used by CI) and pnpm 12.15.0
 (pinned in `package.json`).
 
 ```sh
@@ -36,7 +36,7 @@ maintained manually.
 ## Continuous integration
 
 GitHub Actions runs `pnpm lint` and `pnpm build` on pushes and pull requests.
-The workflow uses Node.js 24, the pnpm version pinned in `package.json`, and a
+The workflow uses Node.js 26.13.0, the pnpm version pinned in `package.json`, and a
 frozen lockfile. It can also be started manually from the Actions tab.
 
 ## Build tooling
