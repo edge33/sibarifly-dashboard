@@ -1,4 +1,4 @@
-# SibariFly landing form
+# SibariFly-dashboard frontend
 
 React 19 + TypeScript application built with Vite 8 and React Compiler.
 
@@ -41,13 +41,6 @@ pnpm build         # Type-check and build for production
 Use the [Biome editor extension](https://biomejs.dev/editors/first-party-extensions/)
 for editor diagnostics and formatting. Markdown and other unsupported formats are
 maintained manually.
-
-## Continuous integration
-
-The root pull request workflow and both Cloud Build pipelines run UI lint
-and `VITE_API_URL=/api pnpm build:web` alongside the API checks. Installation uses
-the single root frozen lockfile. The imported nested CI workflow was consolidated
-into the root workflow.
 
 ## Build tooling
 
