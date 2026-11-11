@@ -1,6 +1,6 @@
 # Monorepo migration tracker
 
-Status: PR 2 (#93) was squash-merged as `0d4d967`; application files are intact, but original UI ancestry is missing from remote `main`. A history repair is prepared on `fix/restore-ui-import-history`; merge it with a merge commit before PR 3.
+Status: PR 2 (#93) was squash-merged as `0d4d967`; application files are intact, but original UI ancestry is missing from remote `main`. History repair PR #96 is open: https://github.com/edge33/sibarifly-dashboard-api/pull/96. Merge it with a merge commit before PR 3.
 
 ## Objective and agreed decisions
 
@@ -427,3 +427,8 @@ is retired only after validation. No repository rename is part of this work.
   `origin/main`; keep the original UI bundle until this passes. No history
   rewrite, direct main push, merge, deployment or PR 3 work is authorized or
   performed as part of preparing the repair.
+
+- Repair PR: https://github.com/edge33/sibarifly-dashboard-api/pull/96
+  (`fix/restore-ui-import-history`), with recovery documentation commit
+  `d25b9f4`. Hosted checks are available on the PR. The remote-main ancestry
+  repair remains pending until this PR is merged using a merge commit.
