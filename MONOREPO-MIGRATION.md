@@ -1,6 +1,6 @@
 # Monorepo migration tracker
 
-Status: PR 1 merged as `e580720`; PR 2 imported and integrated locally. PR 2 published: https://github.com/edge33/sibarifly-dashboard-api/pull/93. Hosted integration checks passed; merge and development validation remain pending.
+Status: PR 2 (#93) was squash-merged as `0d4d967`; application files are intact, but original UI ancestry is missing from remote `main`. A history repair is prepared on `fix/restore-ui-import-history`; merge it with a merge commit before PR 3.
 
 ## Objective and agreed decisions
 
@@ -345,10 +345,10 @@ is retired only after validation. No repository rename is part of this work.
 
 ## Implementation handoff
 
-- Current phase: PR 2 published as https://github.com/edge33/sibarifly-dashboard-api/pull/93;
-  hosted checks passed on the integration commit.
+- Current phase: PR 2 squash-merged as `0d4d967`; history repair prepared.
+  Original UI ancestry must be restored on remote `main` before PR 3.
 - Checkout / branch: `/home/edge33/dev/sibarifly-dashboard-api`,
-  `refactor/import-ui-workspace`.
+  `fix/restore-ui-import-history`.
 - API baseline: `e580720425f2c4363c2a509d4ccf3ce61f4cb0a3`.
 - UI import SHA: `60f8bea84cf32e04149abe8add9afd0d0737c45d`;
   subtree import commit: `a4947d9ee0c65d1bf9d3623eb0069647cb2d95c8`.
@@ -401,3 +401,29 @@ is retired only after validation. No repository rename is part of this work.
 - Development deployment, remote-main ancestry after merge, rollback digest
   capture and hosted release preview remain post-merge gates. Deployment still
   uses the external UI branches; no cloud deployment or PR 3 work ran.
+
+## PR 2 squash-merge recovery
+
+- GitHub confirmed PR #93 was merged at 2026-11-11 14:46:48 UTC as
+  `0d4d967f661277efdac33f77277a9a03cb032403`, with only parent `e580720`.
+  `git merge-base --is-ancestor
+  60f8bea84cf32e04149abe8add9afd0d0737c45d origin/main` returned 1:
+  the original UI ancestry was not retained.
+- Application files are intact: squash merge `0d4d967` and original PR head
+  `6cda036ced5ec4975b2e8e11048379f10ccc2a43` both have tree
+  `aa5e124c561e436a1e2b8d4471624fa26816ba19`. No reset/revert or force push is
+  needed. Original commits are still available locally and through the original
+  PR head, with the UI bundle as an additional backup.
+- Created `fix/restore-ui-import-history` from current `origin/main`.
+  `git merge --no-ff 6cda036ced5ec4975b2e8e11048379f10ccc2a43` produced
+  repair merge `9ac9eef4a361b01d0322ef1331c5a74801f4d481`, with parents
+  `0d4d967` and `6cda036`. The normal merge strategy resolved without conflicts.
+- `git diff --exit-code origin/main 9ac9eef` passed: the repair merge has exactly
+  the same files as current `main`. Ancestry checks for both original UI tip
+  `60f8bea` and subtree import `a4947d9` passed on the repair branch.
+  Only this tracker is updated in the follow-up documentation commit.
+- The repair PR must be merged with a **merge commit**, not squash/rebase.
+  After merge, fetch `origin` and repeat ancestry checks against actual
+  `origin/main`; keep the original UI bundle until this passes. No history
+  rewrite, direct main push, merge, deployment or PR 3 work is authorized or
+  performed as part of preparing the repair.
