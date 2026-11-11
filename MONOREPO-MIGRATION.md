@@ -1,6 +1,6 @@
 # Monorepo migration tracker
 
-Status: PR 1 merged as `e580720`; PR 2 imported and integrated locally. Owner authorized publication after the local testing handoff; integration publication is in progress.
+Status: PR 1 merged as `e580720`; PR 2 imported and integrated locally. PR 2 published: https://github.com/edge33/sibarifly-dashboard-api/pull/93. Hosted integration checks passed; merge and development validation remain pending.
 
 ## Objective and agreed decisions
 
@@ -152,8 +152,9 @@ git subtree add --prefix=apps/web <recorded-ui-main-sha>
   entire multi-PR migration.
 - [x] Verify frozen install, existing API checks, UI lint/build, local UI/API
   communication, and the production container still using external UI branches.
-- [ ] Review/publish when authorized; merge with a merge commit and verify the
-  original UI tip is an ancestor of actual remote `main` after merge.
+- [x] Review and publish when authorized: https://github.com/edge33/sibarifly-dashboard-api/pull/93.
+- [ ] Merge with a merge commit and verify the original UI tip is an ancestor of
+  actual remote `main` after merge.
 - [ ] Verify development deployment remains healthy with external UI assets.
 
 Gate: UI source and original ancestry exist in the workspace, local development
@@ -205,12 +206,12 @@ is retired only after validation. No repository rename is part of this work.
 
 ## Progress log
 
-| Date       | Phase                  | Outcome / evidence                                                                                                  | Remaining work                                                                            |
-| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| 2026-11-11 | Planning               | Inspected API configuration and UI history; agreed on pnpm without Turbo/Nx.                                        | All implementation pending.                                                               |
-| 2026-11-11 | Plan revision          | Split into three independently deployable PRs; API structure first, retaining external UI through PR 2.             | Execute PR 1 before UI import or deployment cutover.                                      |
-| 2026-11-11 | PR 1 implementation    | API workspace merged in PR #91 as `e580720`; local and hosted checks passed.                                        | Owner marked deployment gates complete; exact deployment IDs/digests not recorded.        |
-| 2026-11-11 | PR 2 local integration | UI history imported as `a4947d9`; workspace, CI, release metadata, fresh installation and both containers verified. | Owner testing, integration commit, publication, merge and development validation pending. |
+| Date       | Phase                  | Outcome / evidence                                                                                                  | Remaining work                                                                           |
+| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 2026-11-11 | Planning               | Inspected API configuration and UI history; agreed on pnpm without Turbo/Nx.                                        | All implementation pending.                                                              |
+| 2026-11-11 | Plan revision          | Split into three independently deployable PRs; API structure first, retaining external UI through PR 2.             | Execute PR 1 before UI import or deployment cutover.                                     |
+| 2026-11-11 | PR 1 implementation    | API workspace merged in PR #91 as `e580720`; local and hosted checks passed.                                        | Owner marked deployment gates complete; exact deployment IDs/digests not recorded.       |
+| 2026-11-11 | PR 2 local integration | UI history imported as `a4947d9`; workspace, CI, release metadata, fresh installation and both containers verified. | PR #93 open; hosted integration checks passed. Merge and development validation pending. |
 
 ## PR 1 validation evidence
 
@@ -338,19 +339,22 @@ is retired only after validation. No repository rename is part of this work.
   assets/deep links, API 404, invalid/valid login, refresh cookies and event
   creation/listing. Only disposable database data was written.
 - Temporary validation containers/network were removed; verification images
-  remain. No cloud deployments, pushes, PR creation or integration commits ran.
+  remain. No cloud deployments ran. Integration publication is recorded below.
 - The pre-existing staged tracker edits and Prisma tsconfig fix were preserved;
   their safety patch is `/tmp/sibarifly-pr2-existing-staged.patch`.
 
 ## Implementation handoff
 
-- Current phase: PR 2, local checks passed and publication authorized.
+- Current phase: PR 2 published as https://github.com/edge33/sibarifly-dashboard-api/pull/93;
+  hosted checks passed on the integration commit.
 - Checkout / branch: `/home/edge33/dev/sibarifly-dashboard-api`,
   `refactor/import-ui-workspace`.
 - API baseline: `e580720425f2c4363c2a509d4ccf3ce61f4cb0a3`.
 - UI import SHA: `60f8bea84cf32e04149abe8add9afd0d0737c45d`;
   subtree import commit: `a4947d9ee0c65d1bf9d3623eb0069647cb2d95c8`.
-- Integration commit, PR link and final reconciliation SHA: pending.
+- Integration commit: `d91778f6338e24c2b69bacc215d7f85e8f64739d`;
+  PR: https://github.com/edge33/sibarifly-dashboard-api/pull/93.
+  Final reconciliation SHA: pending PR 3.
 - Backups: `/tmp/sibarifly-api-before-workspace.bundle` (PR 1 original API refs),
   `/tmp/sibarifly-ui-before-pr2.bundle` (all UI refs).
 - Owner authorization: after the local testing handoff, the owner explicitly
@@ -358,8 +362,8 @@ is retired only after validation. No repository rename is part of this work.
   earlier Prisma tsconfig fix were staged by the owner; include that fix so
   Prisma config participates in API typechecking. Merging/deployment is not
   authorized by this publication go-ahead.
-- Remaining gates: integration publication, hosted checks,
-  merge with a merge commit, original UI ancestry on actual remote `main`, then
+- Remaining gates: merge with a merge commit, original UI ancestry on actual
+  remote `main`, then
   development deployment validation and rollback image digest capture.
 - Deployed UI remains external until PR 3; reconcile UI changes after the import
   SHA before switching deployment to `apps/web`.
@@ -378,3 +382,22 @@ is retired only after validation. No repository rename is part of this work.
   `VITE_API_URL=/api pnpm build:web` and `git diff --cached --check` passed.
   The root lint script rejects warnings, retaining the imported UI lint gate.
   The UI build retains its existing large-chunk advisory.
+
+## PR 2 publication evidence
+
+- Owner explicitly authorized commit/push/PR creation after the testing handoff.
+  Separate integration commit `d91778f6338e24c2b69bacc215d7f85e8f64739d` was
+  pushed to `origin/refactor/import-ui-workspace`; the original UI tip remains
+  an ancestor of that remote branch.
+- Open PR: https://github.com/edge33/sibarifly-dashboard-api/pull/93, titled
+  `refactor: import UI into pnpm workspace`. It is ready for review and explicitly
+  requires a merge commit to retain the imported ancestry. No merge ran.
+- `gh pr checks 93 --watch --interval 10` passed for integration commit
+  `d91778f`: required `checks`, 24 seconds, Actions run `43040982943`.
+  See the PR for checks on subsequent tracker-only commits.
+- Final local `pnpm lint` (warnings rejected), `pnpm typecheck`,
+  `pnpm test:coverage`, `VITE_API_URL=/api pnpm build:web`, lockfile graph
+  comparison, original UI ancestry check and staged diff whitespace check passed.
+- Development deployment, remote-main ancestry after merge, rollback digest
+  capture and hosted release preview remain post-merge gates. Deployment still
+  uses the external UI branches; no cloud deployment or PR 3 work ran.
