@@ -1,6 +1,6 @@
 # Monorepo migration tracker
 
-Status: PR 1 implemented and locally verified; publication and hosted checks pending.
+Status: PR 1 implemented; draft PR #91 open, local and hosted checks passed. Post-merge verification pending.
 
 ## Objective and agreed decisions
 
@@ -95,8 +95,11 @@ At initial inspection:
 - [x] Build the container with each external UI branch selection. Smoke-test
   startup, UI/assets/deep links, API success/404 responses, login, and event flows.
 - [x] Review the final diff and record exact local validation results.
-- [ ] Publish the focused PR, verify hosted checks, and record the previous
-  deployed image digest before merge; verify development after merge.
+- [x] Publish the focused draft PR: https://github.com/edge33/sibarifly-dashboard-api/pull/91.
+- [x] Verify hosted PR checks (integration commit `2ed12e7`, GitHub Actions run
+  `43032191829`, passed).
+- [ ] Record the previous deployed image digest before merge; verify development
+  after merge.
 - [x] Verify release configuration/preview and production container readiness.
 - [ ] Record production validation when an authorized normal release occurs.
 
@@ -201,17 +204,17 @@ is retired only after validation. No repository rename is part of this work.
 
 ## Progress log
 
-| Date       | Phase               | Outcome / evidence                                                                                                                | Remaining work                                         |
-| ---------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| 2026-11-11 | Planning            | Inspected API configuration and UI history; agreed on pnpm without Turbo/Nx.                                                      | All implementation pending.                            |
-| 2026-11-11 | Plan revision       | Split into three independently deployable PRs; API structure first, retaining external UI through PR 2.                           | Execute PR 1 before UI import or deployment cutover.   |
-| 2026-11-11 | PR 1 implementation | API moved; workspace/tooling/container/release changes verified locally, including a clean install and both external UI branches. | Publish PR, hosted checks, and post-merge deployments. |
+| Date       | Phase               | Outcome / evidence                                                                                                                | Remaining work                                                           |
+| ---------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 2026-11-11 | Planning            | Inspected API configuration and UI history; agreed on pnpm without Turbo/Nx.                                                      | All implementation pending.                                              |
+| 2026-11-11 | Plan revision       | Split into three independently deployable PRs; API structure first, retaining external UI through PR 2.                           | Execute PR 1 before UI import or deployment cutover.                     |
+| 2026-11-11 | PR 1 implementation | API moved; workspace/tooling/container/release changes verified locally, including a clean install and both external UI branches. | Draft PR #91 open; hosted checks passed, post-merge deployments pending. |
 
 ## PR 1 validation evidence
 
 - Branch: `refactor/api-workspace`, based on API
   `60fd9a7bbfab1d083aaaa4e85513144b62983a9c`.
-- Mechanical move commit: `fca13c2`; integration changes follow separately.
+- Mechanical move commit: `fca13c2`; workspace integration commit: `2ed12e7`.
 - Ref backup: `/tmp/sibarifly-api-before-workspace.bundle`, verified with
   `git bundle verify`. Recover with `git clone <bundle> <new-directory>`, then
   check out the recorded baseline SHA. The backup is local and temporary;
@@ -244,16 +247,20 @@ is retired only after validation. No repository rename is part of this work.
 - `make -n build` confirms the existing development UI branch selection.
 - Existing PR #63 also edits Cloud Build deployment behavior; coordinate any
   merge conflicts without folding that unrelated change into this PR.
-- Hosted checks, cloud deployments, and the currently deployed rollback digest
-  remain pending. Do not mark post-merge gates complete based on local tests.
+- Draft PR: https://github.com/edge33/sibarifly-dashboard-api/pull/91.
+- Temporary validation containers/network and the development process were
+  stopped and removed; built verification images remain available locally.
+- Hosted PR checks passed on integration commit `2ed12e7` in GitHub Actions
+  run `43032191829`; see the PR for checks on subsequent tracker-only commits.
+- Cloud deployments and the currently deployed rollback digest remain pending. Do not mark post-merge gates complete based on local tests.
 
 ## Implementation handoff
 
-- Current phase / PR link: PR 1; publication pending.
+- Current phase / PR link: PR 1, https://github.com/edge33/sibarifly-dashboard-api/pull/91 (draft).
 - Worktree / branch: `/home/edge33/dev/sibarifly-dashboard-api`, `refactor/api-workspace`.
 - API baseline SHA: `60fd9a7bbfab1d083aaaa4e85513144b62983a9c`.
 - UI import SHA / final reconciliation SHA / import commits: pending.
 - Backup locations and preserved refs: `/tmp/sibarifly-api-before-workspace.bundle` (all original API refs).
-- Checks run and results: PR 1 local checks passed; see validation evidence above.
+- Checks run and results: PR 1 local and hosted checks passed; see validation evidence above.
 - Deployment evidence / rollback image digest: pending.
-- External actions / blockers: PR publication/checks, rollback digest capture, merge and deployment validation pending.
+- External actions / blockers: rollback digest capture, merge and deployment validation pending.
