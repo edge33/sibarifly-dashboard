@@ -6,6 +6,7 @@
   "configurations": [
     {
       "name": "Launch via NPM",
+      "cwd": "${workspaceFolder}",
       "request": "launch",
       "runtimeArgs": ["run-script", "dev:debug"],
       "runtimeExecutable": "pnpm",
@@ -15,6 +16,7 @@
     },
     {
       "name": "Test via NPM",
+      "cwd": "${workspaceFolder}",
       "request": "launch",
       "runtimeArgs": ["run-script", "test"],
       "runtimeExecutable": "pnpm",
