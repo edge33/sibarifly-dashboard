@@ -3,6 +3,13 @@
 Release Please maintains this file from Conventional Commits merged into `main`.
 Breaking changes and database deployment requirements must be described in release PRs.
 
+## [1.4.0](https://github.com/edge33/sibarifly-dashboard-api/compare/v1.3.0...v1.4.0) (2026-11-11)
+
+
+### Features
+
+* build API and UI from the same monorepo revision ([#97](https://github.com/edge33/sibarifly-dashboard-api/issues/97)) ([4e42f0f](https://github.com/edge33/sibarifly-dashboard-api/commit/4e42f0fe476ad353b593b5c11dd1e7c66435a041))
+
 ## [1.3.0](https://github.com/edge33/sibarifly-dashboard-api/compare/v1.2.0...v1.3.0) (2026-10-31)
 
 
