@@ -6,13 +6,25 @@ substitutions:
   _REGION: europe-west8
   _SERVICE: sibarifly-dashboard-main
 steps:
+  - id: checks
+    name: node:26.13.0-slim@sha256:5adad64f9a1fca2d51972caa65983634c8a774eb300d72b20f7f2a0f60368072
+    entrypoint: sh
+    args:
+      - -ec
+      - |
+        npm install -g pnpm@12.18.0
+        pnpm install --frozen-lockfile
+        pnpm prisma-generate
+        pnpm lint
+        pnpm typecheck
+        pnpm test
+        VITE_API_URL=/api pnpm build:web
+
   - id: build
     name: gcr.io/cloud-builders/docker@sha256:91eaff0806a70dc0b3c853191a2da9995b2aa88d9b24196182344a4cef633603
     args:
       - build
       - --no-cache
-      - --build-arg
-      - WEB_APP_BRANCH=main
       - --build-arg
       - VITE_API_URL=/api
       - --label
@@ -29,14 +41,10 @@ steps:
 
   - id: migrate
     name: node:26.13.0-slim@sha256:5adad64f9a1fca2d51972caa65983634c8a774eb300d72b20f7f2a0f60368072
+    dir: apps/api
     entrypoint: sh
     secretEnv: [DATABASE_URL, DIRECT_URL]
-    args:
-      - -ec
-      - |
-        npm install -g pnpm@12.18.0
-        pnpm install --frozen-lockfile
-        pnpm prisma-migrate
+    args: [-ec, "./node_modules/.bin/prisma migrate deploy"]
 
   - id: deploy
     name: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim@sha256:bcf0e21d6d66c692c78bff2ca92a459eefbf822c5a98a4de4e3287540005fe04

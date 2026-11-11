@@ -4,8 +4,11 @@
 .gitignore
 **/*.md
 **/dist
+**/static
 **/.env*
+.aws
+.agents
+.codex
+**/*.pem
+**/*.key
 Makefile
-
-# PR 2: deployed UI still comes from the external repository.
-apps/web

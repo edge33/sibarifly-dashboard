@@ -9,13 +9,13 @@ workspace. Biome and TypeScript are shared development tools installed at the
 root; application dependencies, Prisma configuration, and environment files live
 in `apps/api`. Run the commands below from the repository root.
 
-The React UI is imported with its original history in `apps/web`. Docker still
-fetches [sibarifly-landing-form](https://github.com/edge33/sibarifly-landing-form):
-`develop` for development and `main` for production. Until PR 3 switches deployment
-to the local UI, make deployable UI changes in that external repository and avoid
-editing both copies. PR 3 will reconcile commits after the import revision
-`60f8bea84cf32e04149abe8add9afd0d0737c45d`. See
-[the migration tracker](MONOREPO-MIGRATION.md) for import evidence and cutover gates.
+The React UI lives in `apps/web`, with its original Git history preserved.
+Both applications are built from the same monorepo revision and shipped in one
+container. Make all API and UI changes here; the external
+[sibarifly-landing-form](https://github.com/edge33/sibarifly-landing-form)
+repository is retained for migration history and older build pipelines. See
+[the migration tracker](MONOREPO-MIGRATION.md) for cutover evidence and remaining
+deployment gates.
 
 ## Local development
 
@@ -80,12 +80,12 @@ the API from `/app/apps/api`; its UI assets are served from that directory's
 `static` folder.
 
 ```sh
-docker build --build-arg WEB_APP_BRANCH=develop --build-arg VITE_API_URL=/api -t sibarifly-dashboard-api .
+docker build --build-arg VITE_API_URL=/api -t sibarifly-dashboard-api .
 ```
 
-Use `WEB_APP_BRANCH=main` to verify the production UI selection. `make build`
-continues to select the development UI. Container runtime settings are supplied
-through environment variables, not packaged environment files.
+`make build` builds the same local API/UI source. `VITE_API_URL` defaults to
+`/api` at build time. Container runtime settings are supplied through environment
+variables, not packaged environment files.
 
 ## Dependency updates
 
@@ -106,8 +106,8 @@ Dependency Dashboard issue to review pending updates and configuration warnings.
 Every merge to `main` deploys to development. Release Please maintains a release
 PR containing the next version and changelog. Merge that PR when ready to release;
 it creates a stable `vMAJOR.MINOR.PATCH` tag and GitHub release. Cloud Build then
-builds the release image using the latest frontend `main`, runs production migrations,
-and deploys to production.
+checks and builds both apps from the tagged monorepo revision, runs production
+migrations, and deploys to production.
 A GitHub release records a version; check Cloud Build for actual deployment status.
 
 Use Conventional Commit PR titles: `fix:` for patches, `feat:` for
@@ -178,28 +178,56 @@ Merging the release PR is the manual release decision. Optionally configure
 Cloud Build approval before any production migrations or deployment. This does
 not require a manually dispatched GitHub Actions workflow.
 
-### Images and frontend branches
+### Images and source revisions
 
-| API build                  | Frontend branch  | Image tag                 |
-| -------------------------- | ---------------- | ------------------------- |
-| Push to `main`             | Latest `develop` | `<commit SHA>-<build ID>` |
-| Release tag, e.g. `v1.2.3` | Latest `main`    | `v1.2.3`                  |
+| Monorepo source            | API and UI source    | Image tag                 |
+| -------------------------- | -------------------- | ------------------------- |
+| Push to `main`             | That commit          | `<commit SHA>-<build ID>` |
+| Release tag, e.g. `v1.2.3` | That tagged revision | `v1.2.3`                  |
 
 For example, a release publishes
 `gcr.io/<project>/github.com/edge33/sibarifly-dashboard:v1.2.3`.
 Development builds keep separate tags so repeated merges at the same package
-version cannot overwrite a release image. OpenAPI reads the package version.
+version cannot overwrite a release image. OpenAPI reads the API package version.
 
-Both builds pass `WEB_APP_BRANCH` explicitly and disable Docker layer caching so
-the frontend is fetched from the requested branch for each build. Frontend commits
-are intentionally not pinned. Release builds create a new image rather than reuse
-the development image, since they include a different frontend branch. A retry
-can pick up newer frontend changes and replace the versioned image tag.
+Both pipelines run the API checks and UI lint/typecheck/build against their
+checked-out revision, then build the local UI with `VITE_API_URL=/api` using the
+root frozen lockfile. Docker performs no external UI checkout. The existing
+`--no-cache` build policy is retained. Images carry their monorepo revision label;
+production images also carry the release tag as their version label.
 
-The development pipeline runs the existing application checks before building.
-Release Please owns version consistency. The release pipeline builds and pushes
-the versioned image, runs migrations, and deploys.
-Both pipelines resolve the pushed image digest for the Cloud Run deployment.
+API-only and UI-only `fix:`/`feat:` changes participate in the same Release Please
+stream, with one root changelog and synchronized root/API/UI package versions.
+Release builds create a new image from the release tag rather than reuse the
+development image. Both pipelines resolve the pushed image digest for deployment.
+
+### Cutover and rollback
+
+Before merging the cutover, agree on a final reconciliation window for the
+external UI repository and recheck both its `main` and `develop` tips against the
+revisions recorded in the migration tracker. Route subsequent UI work here.
+Before each deployment, record the currently working Cloud Run image digest:
+
+```sh
+gcloud run services describe <service> --region=europe-west8 \
+  --format='value(status.latestReadyRevisionName)'
+gcloud run revisions describe <ready-revision> --region=europe-west8 \
+  --format='value(status.imageDigest)'
+```
+
+Save the service, revision, and full `gcr.io/...@sha256:...` image reference in the
+deployment record. To roll back the application to that recorded image:
+
+```sh
+gcloud run deploy <service> --region=europe-west8 \
+  --image='<recorded-image-reference>@sha256:<digest>' --quiet
+```
+
+Keep the external repository and its branches available while older pipelines
+may still fetch them. After development and the first normal production release
+are verified, add a migration notice there, retire obsolete automation, and archive
+it with owner authorization. Git imports preserve source history, not GitHub
+issues or PR discussions.
 
 Release in increasing version order and allow one production migration/deployment
 at a time. Prisma migrations must support the application still running during
