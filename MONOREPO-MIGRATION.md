@@ -1,6 +1,6 @@
 # Monorepo migration tracker
 
-Status: PR 2 (#93) was squash-merged as `0d4d967`; application files are intact, but original UI ancestry is missing from remote `main`. History repair PR #96 is open: https://github.com/edge33/sibarifly-dashboard-api/pull/96. Merge it with a merge commit before PR 3.
+Status: PR 3 local implementation and validation complete on `refactor/local-ui-deployment`, based on `f1857ec`. Docker now builds API/UI from the local workspace. Published as PR #97 (implementation `a2e510b`). Final reconciliation window, rollback digest capture, deployment validation, and external repository retirement remain pending. Deployed pipelines remain unchanged until merge.
 
 ## Objective and agreed decisions
 
@@ -153,9 +153,12 @@ git subtree add --prefix=apps/web <recorded-ui-main-sha>
 - [x] Verify frozen install, existing API checks, UI lint/build, local UI/API
   communication, and the production container still using external UI branches.
 - [x] Review and publish when authorized: https://github.com/edge33/sibarifly-dashboard-api/pull/93.
-- [ ] Merge with a merge commit and verify the original UI tip is an ancestor of
-  actual remote `main` after merge.
-- [ ] Verify development deployment remains healthy with external UI assets.
+- [x] Merge with a merge commit and verify the original UI tip is an ancestor of
+  actual remote `main` after merge. Final reconstructed merge: `f1857ec`;
+  both original UI tip and subtree import ancestry checks passed on remote main.
+- [x] Confirm development deployment with external UI assets: the owner reported
+  deployment complete; external UI build selection remains unchanged. No new
+  independent cloud smoke test or image digest was provided in this session.
 
 Gate: UI source and original ancestry exist in the workspace, local development
 and CI cover both apps, and deployed images still use the external UI repository.
@@ -165,32 +168,35 @@ Historical UI commits retain their original paths; history is not path-rewritten
 
 - [ ] Start from merged PR 2. Coordinate a short external UI merge freeze or
   explicit final reconciliation window for cutover.
-- [ ] Fetch fresh UI refs and inspect changes since import, including unique
+- [x] Fetch fresh UI refs and inspect changes since import, including unique
   `develop` changes. Record the exact final UI revision and resolve which
   changes should ship together before replacing branch-specific builds.
-- [ ] Import intervening UI history without squashing (for example using
+- [x] No intervening UI commits exist at the refreshed refs; no new import required.
+  Preserve history without squashing if refs change (for example using
   `git subtree merge --prefix=apps/web <final-ui-main-sha>`), resolve integration
   conflicts, and retain any branch history not being integrated in backups/refs.
-- [ ] Verify original and newly imported UI tips remain ancestors. Any PR with
+- [x] Verified both UI branch tips and the original subtree import remain ancestors;
+  no new tips were imported. Any PR with
   additional imported ancestry must use a merge commit too.
-- [ ] Build UI from local `apps/web` using the root frozen installation and
+- [x] Build UI from local `apps/web` using the root frozen installation and
   copy its output to the API static asset location.
-- [ ] Remove the external UI clone, `WEB_APP_BRANCH`, obsolete Git clone tooling,
+- [x] Remove the external UI clone, `WEB_APP_BRANCH`, obsolete Git clone tooling,
   and related flags from Docker, both Cloud Build files, Makefile, and docs.
   Preserve `VITE_API_URL=/api` at UI build time.
-- [ ] Verify final runtime dependency links, Prisma client, runtime manifest,
+- [x] Verify final runtime dependency links, Prisma client, runtime manifest,
   static files, revision/version labels, and deployment by image digest.
-- [ ] Update `.dockerignore` for nested dependencies, secrets, and generated
+- [x] Update `.dockerignore` for nested dependencies, secrets, and generated
   output. Review cache changes separately from migration correctness.
 - [ ] Verify both pipelines build API/UI from one revision; retain deployment on
   `main` and production on stable tags. Confirm required validation covers the
-  exact source used for release images.
-- [ ] Verify UI-only fixes/features participate in the single release stream
+  exact source used for release images. Local configuration review passed; hosted
+  runs and trigger inspection remain pending.
+- [x] Verify UI-only fixes/features participate in the single release stream
   and documentation explains the end of external UI branch selection.
-- [ ] Run fresh frozen installation, Prisma generation, API checks, UI lint/build,
+- [x] Run fresh frozen installation, Prisma generation, API checks, UI lint/build,
   disposable-database migrations, and production-container smoke tests for UI
   entry/assets/deep links, API success/404s, login/refresh, and event flows.
-- [ ] Review the final diff for secrets, generated files, unrelated changes, and
+- [x] Review the final diff for secrets, generated files, unrelated changes, and
   lockfile churn. Record checks that could not run and resolve material blockers.
 - [ ] Record the previous working image digest and rollback procedure. An
   application rollback does not undo database migrations; external UI must stay
@@ -206,12 +212,13 @@ is retired only after validation. No repository rename is part of this work.
 
 ## Progress log
 
-| Date       | Phase                  | Outcome / evidence                                                                                                  | Remaining work                                                                           |
-| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| 2026-11-11 | Planning               | Inspected API configuration and UI history; agreed on pnpm without Turbo/Nx.                                        | All implementation pending.                                                              |
-| 2026-11-11 | Plan revision          | Split into three independently deployable PRs; API structure first, retaining external UI through PR 2.             | Execute PR 1 before UI import or deployment cutover.                                     |
-| 2026-11-11 | PR 1 implementation    | API workspace merged in PR #91 as `e580720`; local and hosted checks passed.                                        | Owner marked deployment gates complete; exact deployment IDs/digests not recorded.       |
-| 2026-11-11 | PR 2 local integration | UI history imported as `a4947d9`; workspace, CI, release metadata, fresh installation and both containers verified. | PR #93 open; hosted integration checks passed. Merge and development validation pending. |
+| Date       | Phase                  | Outcome / evidence                                                                                                                 | Remaining work                                                                                                                |
+| ---------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-11 | Planning               | Inspected API configuration and UI history; agreed on pnpm without Turbo/Nx.                                                       | All implementation pending.                                                                                                   |
+| 2026-11-11 | Plan revision          | Split into three independently deployable PRs; API structure first, retaining external UI through PR 2.                            | Execute PR 1 before UI import or deployment cutover.                                                                          |
+| 2026-11-11 | PR 1 implementation    | API workspace merged in PR #91 as `e580720`; local and hosted checks passed.                                                       | Owner marked deployment gates complete; exact deployment IDs/digests not recorded.                                            |
+| 2026-11-11 | PR 2 local integration | UI history imported as `a4947d9`; workspace, CI, release metadata, fresh installation and both containers verified.                | Completed as `f1857ec`; original ancestry/blame verified and deployment confirmed by owner.                                   |
+| 2026-11-11 | PR 3 local cutover     | Local UI image, fresh workspace checks, migrations, runtime smoke and shared release previews passed; no new UI commits to import. | Final reconciliation window, rollback digest, publication/merge, cloud validation and external repository retirement pending. |
 
 ## PR 1 validation evidence
 
@@ -345,28 +352,34 @@ is retired only after validation. No repository rename is part of this work.
 
 ## Implementation handoff
 
-- Current phase: PR 2 squash-merged as `0d4d967`; history repair prepared.
-  Original UI ancestry must be restored on remote `main` before PR 3.
+- Current phase: PR 3 implementation and local validation complete; publication
+  and deployment gates remain pending. See PR 3 evidence below.
 - Checkout / branch: `/home/edge33/dev/sibarifly-dashboard-api`,
-  `fix/restore-ui-import-history`.
+  `refactor/local-ui-deployment`.
+- Current remote main / final history-preserving merge:
+  `f1857ec14ca1b5dcad7593f459cc2ceb1f15410d`.
 - API baseline: `e580720425f2c4363c2a509d4ccf3ce61f4cb0a3`.
 - UI import SHA: `60f8bea84cf32e04149abe8add9afd0d0737c45d`;
-  subtree import commit: `a4947d9ee0c65d1bf9d3623eb0069647cb2d95c8`.
-- Integration commit: `d91778f6338e24c2b69bacc215d7f85e8f64739d`;
-  PR: https://github.com/edge33/sibarifly-dashboard-api/pull/93.
-  Final reconciliation SHA: pending PR 3.
-- Backups: `/tmp/sibarifly-api-before-workspace.bundle` (PR 1 original API refs),
-  `/tmp/sibarifly-ui-before-pr2.bundle` (all UI refs).
-- Owner authorization: after the local testing handoff, the owner explicitly
-  authorized committing, pushing and opening PR 2. All integration files and the
-  earlier Prisma tsconfig fix were staged by the owner; include that fix so
-  Prisma config participates in API typechecking. Merging/deployment is not
-  authorized by this publication go-ahead.
-- Remaining gates: merge with a merge commit, original UI ancestry on actual
-  remote `main`, then
-  development deployment validation and rollback image digest capture.
-- Deployed UI remains external until PR 3; reconcile UI changes after the import
-  SHA before switching deployment to `apps/web`.
+  subtree import commit: `a4947d9ee0c65d1bf9d3623eb0069647cb2d95c8`;
+  integration commit: `d91778f6338e24c2b69bacc215d7f85e8f64739d`.
+- PRs: https://github.com/edge33/sibarifly-dashboard-api/pull/93 and
+  https://github.com/edge33/sibarifly-dashboard-api/pull/96. Their merge/recovery
+  sequence was superseded by the explicitly authorized reconstruction below.
+- Backups: `/tmp/sibarifly-api-before-workspace.bundle` (PR 1 API refs),
+  `/tmp/sibarifly-ui-before-pr2.bundle` (all UI refs),
+  `/tmp/sibarifly-before-ui-history-rewrite.bundle` and local branch
+  `backup/main-before-ui-history-rewrite` (pre-reconstruction state).
+- Deployment: completed by the owner and confirmed in conversation. No new
+  independent cloud smoke test, deployment/build ID or rollback image digest was
+  supplied; this is owner-confirmed evidence, not an agent cloud verification.
+- Deployed UI remains external until PR 3. Before cutover, refresh both UI refs,
+  reconcile changes after the import SHA and record the current rollback image
+  digest. Coordinate the final reconciliation window with the owner.
+- Original local/hosted application checks passed; final remote ancestry and
+  GitHub blame checks passed. Branch protection is restored and Active.
+- Owner requested PR 3 implementation in the subsequent session. Merges,
+  deployments, settings changes, and external repository retirement remain
+  outside that local implementation request.
 
 ## PR 2 editor follow-up
 
@@ -384,6 +397,8 @@ is retired only after validation. No repository rename is part of this work.
   The UI build retains its existing large-chunk advisory.
 
 ## PR 2 publication evidence
+
+Historical record at publication; final completion status is recorded below.
 
 - Owner explicitly authorized commit/push/PR creation after the testing handoff.
   Separate integration commit `d91778f6338e24c2b69bacc215d7f85e8f64739d` was
@@ -403,6 +418,8 @@ is retired only after validation. No repository rename is part of this work.
   uses the external UI branches; no cloud deployment or PR 3 work ran.
 
 ## PR 2 squash-merge recovery
+
+Historical repair attempt; superseded by the authorized reconstruction below.
 
 - GitHub confirmed PR #93 was merged at 2026-11-11 14:46:48 UTC as
   `0d4d967f661277efdac33f77277a9a03cb032403`, with only parent `e580720`.
@@ -432,3 +449,140 @@ is retired only after validation. No repository rename is part of this work.
   (`fix/restore-ui-import-history`), with recovery documentation commit
   `d25b9f4`. Hosted checks are available on the PR. The remote-main ancestry
   repair remains pending until this PR is merged using a merge commit.
+
+## PR 2 final reconstruction and completion
+
+- To restore default blame as well as ancestry, the owner explicitly approved
+  replacing remote `main` with verified merge
+  `f1857ec14ca1b5dcad7593f459cc2ceb1f15410d`, whose parents are API baseline
+  `e580720` and original PR head `6cda036`. Original UI commit IDs were retained.
+- Backed up the previous main in `backup/main-before-ui-history-rewrite` and
+  `/tmp/sibarifly-before-ui-history-rewrite.bundle`; bundle verification passed.
+  The replacement tree exactly matched previous main, including recovery notes.
+- Executed `git push
+  --force-with-lease=refs/heads/main:d997a2aab66b700d8a5e1df9bb1e04189d86e3b9
+  origin f1857ec14ca1b5dcad7593f459cc2ceb1f15410d:refs/heads/main` after explicit
+  owner approval. The push succeeded. Ruleset `795606` was temporarily disabled
+  and its complete saved configuration restored exactly with enforcement Active.
+  Local `main` was synchronized using `git reset --keep origin/main`.
+- After `git fetch origin`, ancestry checks for original UI tip `60f8bea` and
+  original subtree import `a4947d9` passed on actual remote main. The accidental
+  squash `0d4d967` is no longer an ancestor of main. Files remained identical to
+  the pre-reconstruction backup.
+- GitHub's GraphQL blame for `apps/web/src/components/Footer.tsx` confirms
+  original attribution: lines 1–8 and 10–61 to `be8b1bc` (2024 initial commit),
+  line 9 to `c32c280` (English translation). The ordinary file-page header still
+  shows subtree import `a4947d9` because that introduced the prefixed path.
+- The owner subsequently reported deployment complete and requested closing
+  phase 2. Recorded that confirmation as the deployment gate; no new cloud smoke
+  test was performed by the agent or deployment ID/digest invented.
+- Final completion check: `git fetch origin` confirmed remote main `f1857ec`;
+  `git merge-base --is-ancestor <original-ui-tip> origin/main` and the matching
+  subtree-import check passed; ruleset `795606` remained Active.
+- All PR 2 checklist items are complete. PR 3 remains entirely unchecked and
+  continues to own UI reconciliation and switching deployment to local UI.
+
+## PR 3 implementation and local validation evidence
+
+- Worktree: `/home/edge33/dev/sibarifly-dashboard-api`; branch
+  `refactor/local-ui-deployment`, created from freshly fetched `origin/main`
+  `f1857ec14ca1b5dcad7593f459cc2ceb1f15410d`. The owner's existing tracker edits
+  completing PR 2 were retained. Publication was subsequently authorized; see the PR 3 publication record below.
+- `git fetch origin` and `git fetch ui-history --no-tags` succeeded. Final
+  `git ls-remote ui-history refs/heads/main refs/heads/develop` recheck returned
+  `main=60f8bea84cf32e04149abe8add9afd0d0737c45d` and
+  `develop=5b91dcab49677e4af0c9f62ff9da6cefc0f47fa1`, unchanged since import.
+  `git rev-list --left-right --count ui-history/main...ui-history/develop`
+  returned `1 0`; there are no unique development commits. No new history merge
+  or conflict resolution was needed. `git merge-base --is-ancestor` passed for
+  `60f8bea`, `a4947d9`, and `ui-history/develop` against `HEAD`.
+- `git bundle create /tmp/sibarifly-before-pr3.bundle --all` and
+  `git bundle verify /tmp/sibarifly-before-pr3.bundle` passed. Both UI branch refs
+  are included. This is a temporary local backup, not durable remote storage.
+- Docker now installs the root frozen workspace once for Prisma generation and
+  the local UI build, then copies `apps/web/dist` to `/app/apps/api/static`.
+  Production dependencies are filtered to the API, with its pnpm links retained.
+  The external clone, Git installation and UI branch argument were removed.
+  `VITE_API_URL=/api` is the Docker default and remains explicit in both pipelines.
+- Both pipeline definitions use the checked-out monorepo source and preserve image
+  names, revision/version labels, tag/branch intent and deployment by digest.
+  Production now runs the same checks as development before building, and its
+  migration step reuses the workspace installation. No caching policy was changed.
+  Parsed both YAML files with the existing temporary release-preview `yaml`
+  dependency and asserted identical checks, step ordering, local UI build args,
+  migration working directories and digest deployment expressions; passed.
+  Actual hosted pipeline runs and configured trigger settings were not inspected.
+- Fresh checkout `/tmp/sibarifly-pr3-clean` was cloned without dependencies and
+  overlaid with the tracked implementation diff. Commands passed:
+  `pnpm install --frozen-lockfile`, `pnpm prisma-generate`, `pnpm lint`,
+  `pnpm typecheck`, `pnpm test:coverage`, and
+  `VITE_API_URL=/api pnpm build:web`. All 18 API tests passed. The UI's existing
+  warning about its JavaScript chunk exceeding 500 kB remains. Installation log:
+  `/tmp/sibarifly-pr3-install.log`. No lockfile or dependency versions changed.
+- `DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:15433/postgres
+  DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:15433/postgres
+  pnpm --dir /tmp/sibarifly-pr3-clean prisma-migrate` applied all five migrations
+  successfully to isolated PostgreSQL 15 (`sibarifly-pr3-db`).
+- `docker build --build-arg VITE_API_URL=/api --label
+  org.opencontainers.image.revision=f1857ec14ca1b5dcad7593f459cc2ceb1f15410d
+  --label org.opencontainers.image.version=pr3-validation
+  -t sibarifly-api-pr3:local .` passed. Log: `/tmp/sibarifly-pr3-build.log`.
+  Image ID: `9982108df227`. This validation image contains the uncommitted PR 3
+  diff; its revision label identifies the base, not a published implementation.
+- Runtime inspection resolved every declared API dependency and loaded
+  `generated/client/index.js`; the runtime manifest reports `1.3.0`.
+  No `apps/web` source directory, packaged `.env`, React runtime dependency or
+  Git executable was present. Image revision/version labels matched build args.
+  `diff -rq /tmp/sibarifly-pr3-clean/apps/web/dist
+  /tmp/sibarifly-pr3-packaged-static` passed: packaged UI matches the fresh local
+  build byte for byte.
+- `python3 /tmp/sibarifly-pr3-smoke.py` passed on port 18002: UI entry and both
+  referenced JS/CSS assets, SPA deep link, API 404, invalid/valid login, refresh
+  cookie, and database-backed event creation/listing. The script adapts the prior
+  migration smoke test to the PR 3 container. Disposable app/database containers
+  and the test network were removed afterward; the image remains local.
+- `node /tmp/sibarifly-pr3-release-preview.cjs` passed API patch, UI-only patch
+  and UI-only feature previews: `1.3.1`, `1.3.1`, and `1.4.0`, respectively,
+  synchronized across root/API/UI with one changelog. Imported historical
+  features/fixes were excluded. Expected parser diagnostics for non-Conventional
+  merge/import messages did not affect previews. No release was published.
+- `make -n build` uses only the local workspace and `VITE_API_URL=/api`.
+  `git diff --check` passed; reviewed changes include no source behavior changes,
+  dependency upgrades, lockfile churn, generated output or new credentials.
+  Existing open PR #63 also touches deployment logic and remains separate.
+
+### Remaining PR 3 cutover gates
+
+- Agree on the final external UI reconciliation window before merge and recheck
+  both UI refs then. The local recheck above is not an imposed external merge
+  freeze. Any new source commits must be reconciled with history preserved.
+- Capture the previous working image digest for each environment before rollout.
+  No deployed digest was supplied or queried; `gcloud` is unavailable locally.
+  README documents capture and rollback commands. App rollback does not reverse
+  database migrations. Keep the external UI branches available for older builds.
+- Publication is authorized; run hosted PR checks, then merge when authorized
+  and verify remote ancestry. No merge, release, deployment or repository settings
+  change has been performed by the agent.
+- Verify development, first normal release preview/tag, and production before
+  adding an external migration notice, retiring automation or archiving the old
+  repository. These external actions remain owner gates.
+
+## PR 3 publication
+
+- Owner authorized committing with `feat:`, pushing the branch and opening a PR
+  for development testing. Commit and PR title: `feat: build API and UI from the
+  same monorepo revision`. Release Please preview confirms a feature change
+  advances the current `1.3.0` stream to `1.4.0`; versions are not bumped manually.
+- Immediately before publication, `git fetch origin` confirmed `origin/main`
+  remained `f1857ec`. `git ls-remote ui-history refs/heads/main refs/heads/develop`
+  confirmed both recorded UI tips remain unchanged. No reconciliation import is
+  needed at publication time.
+- Pushing the PR branch triggers PR checks. The configured development deployment
+  triggers on merge to `main`; opening the PR alone does not deploy it. Merge and
+  actual development validation remain pending.
+
+- Published implementation commit: `a2e510b` on
+  `origin/refactor/local-ui-deployment`.
+- PR: https://github.com/edge33/sibarifly-dashboard-api/pull/97, opened against
+  `main` with the `feat:` title above. Hosted checks were requested automatically;
+  development deployment remains pending merge.

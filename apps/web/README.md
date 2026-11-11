@@ -15,7 +15,9 @@ pnpm dev:all
 
 `pnpm dev:web` runs Vite alone. Open <http://localhost:3000>; `VITE_API_URL=/api`
 uses the existing proxy to the API on port 8000. See the root README for API setup.
-Deployable UI changes still belong in the external UI repository until PR 3.
+Make deployable UI changes in this workspace. Docker builds `apps/web` and the
+API from the same revision, using `VITE_API_URL=/api`. UI fixes and features share
+the root Release Please version and changelog with the API.
 
 ## Code quality
 
@@ -42,7 +44,7 @@ maintained manually.
 
 ## Continuous integration
 
-The root pull request workflow and development Cloud Build checks run UI lint
+The root pull request workflow and both Cloud Build pipelines run UI lint
 and `VITE_API_URL=/api pnpm build:web` alongside the API checks. Installation uses
 the single root frozen lockfile. The imported nested CI workflow was consolidated
 into the root workflow.
