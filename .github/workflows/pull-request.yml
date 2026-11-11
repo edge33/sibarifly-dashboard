@@ -17,6 +17,7 @@ jobs:
           cache: true
           require-lockfile: true
 
+      # Root scripts run application commands with apps/api as their cwd.
       - name: Generate Prisma Client
         run: pnpm prisma-generate
 

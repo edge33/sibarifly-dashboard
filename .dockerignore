@@ -1,8 +1,8 @@
-node_modules
-generated/client
+**/node_modules
+**/generated
 .git
 .gitignore
-*.md
-dist
-.env*
+**/*.md
+**/dist
+**/.env*
 Makefile

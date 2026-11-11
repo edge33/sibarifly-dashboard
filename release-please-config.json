@@ -4,7 +4,14 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "include-component-in-tag": false
+      "include-component-in-tag": false,
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "apps/api/package.json",
+          "jsonpath": "$.version"
+        }
+      ]
     }
   }
 }

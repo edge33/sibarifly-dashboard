@@ -1,22 +1,44 @@
-# fastify-boilerplate
+# SibariFly dashboard
 
 authenticate against gcloud in order to obtain the credentials
 
 `gcloud auth application-default login `
 
-A simple boilerplate to bootstrap a fastify app
+The Fastify API lives in `apps/api`, managed through a [pnpm](https://pnpm.io/)
+workspace. Biome and TypeScript are shared development tools installed at the
+root; application dependencies, Prisma configuration, and environment files live
+in `apps/api`. Run the commands below from the repository root.
 
-built with [pnpm](https://pnpm.io/)
+The UI remains in [sibarifly-landing-form](https://github.com/edge33/sibarifly-landing-form).
+Docker still fetches its `develop` branch for development and `main` for production.
+The API workspace move does not change that deployment behavior. See
+[the migration tracker](MONOREPO-MIGRATION.md) for the subsequent UI import and
+deployment cutover PRs.
 
-it features
+## Local development
 
-- Typescript
-- Biome
-- Editorconfig
+Use Node `26.13.0` from `.nvmrc` and pnpm `12.18.0` from `package.json`.
+
+```sh
+pnpm install --frozen-lockfile
+cp apps/api/.env.sample apps/api/.env
+pnpm prisma-generate
+pnpm dev
+```
+
+Configure `apps/api/.env` for your local environment before starting the API.
+For an existing checkout, move your previous root `.env` into `apps/api/.env`.
+The existing `pnpm dev:debug` command and VS Code launch configurations still work.
+Prisma loads `apps/api/.env`; migrations require `DIRECT_URL` or `DATABASE_URL`.
+
+Root scripts forward application commands to the API package, using `apps/api`
+as the working directory. `pnpm lint` and `pnpm format` cover repository files;
+the API has its own Biome configuration extending the root defaults. To execute
+another API-specific command, use `pnpm --filter sibarifly-dashboard-api exec <command>`.
 
 ## Local verification
 
-Use Node 24 and pnpm 12. The test database is defined in `docker-compose-test.yml`.
+The test database is defined in `docker-compose-test.yml`.
 Development, tests, and production run TypeScript directly with Node's built-in type stripping. Use `pnpm typecheck` to check types without emitting JavaScript.
 
 ```sh
@@ -25,11 +47,31 @@ pnpm install --frozen-lockfile
 pnpm prisma-generate
 DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
   DIRECT_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres \
-  pnpm prisma migrate deploy
+  pnpm prisma-migrate
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm test:coverage
 ```
+
+Tests load `apps/api/.env.test`. Existing unit tests mock Prisma; use the local
+database above to verify migrations and application behavior with a real database.
+The generated Prisma client lives in `apps/api/generated/client` and is ignored.
+
+## Container verification
+
+Build from the repository root so Docker can read the workspace manifest and
+lockfile. The image preserves the pnpm workspace dependency layout and starts
+the API from `/app/apps/api`; its UI assets are served from that directory's
+`static` folder.
+
+```sh
+docker build --build-arg WEB_APP_BRANCH=develop --build-arg VITE_API_URL=/api -t sibarifly-dashboard-api .
+```
+
+Use `WEB_APP_BRANCH=main` to verify the production UI selection. `make build`
+continues to select the development UI. Container runtime settings are supplied
+through environment variables, not packaged environment files.
 
 ## Dependency updates
 
@@ -72,8 +114,10 @@ tags. The initial manifest uses the existing `1.0.0` package version as a baseli
    Permit the release identity to create PRs, labels, tags, and releases without
    bypassing PR review. GitHub Actions needs permission to create pull requests
    if the repository's Actions settings restrict that capability.
-3. Merge this configuration. Release Please will manage `package.json`,
-   `.release-please-manifest.json`, and `CHANGELOG.md`; do not bump them manually.
+3. Merge this configuration. Release Please will manage root `package.json`,
+   `apps/api/package.json`, `.release-please-manifest.json`, and `CHANGELOG.md`;
+   do not bump them manually. The root release configuration synchronizes the API
+   version through `extra-files`, preserving one version stream and `vX.Y.Z` tags.
 
 ### Cloud Build setup (required before switching deployments)
 

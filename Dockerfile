@@ -3,8 +3,9 @@ RUN apt-get update && apt-get install -y openssl git
 RUN npm install -g pnpm@12.18.0
 
 FROM base AS prod-deps
-COPY . /app
 WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/api/package.json ./apps/api/package.json
 RUN pnpm install --prod --frozen-lockfile
 
 FROM base AS prisma-client
@@ -22,12 +23,14 @@ RUN pnpm install --frozen-lockfile
 RUN pnpm run build
 
 FROM base
-WORKDIR /app
-COPY --from=prod-deps /app/package.json /app/package.json
+WORKDIR /app/apps/api
+# Keep the workspace virtual store and the API links at their original paths.
 COPY --from=prod-deps /app/node_modules /app/node_modules
-COPY src /app/src
-COPY --from=prisma-client /app/generated /app/generated
-COPY --from=build-frontend /sibarifly-landing-form/dist /app/static/
+COPY --from=prod-deps /app/apps/api/package.json ./package.json
+COPY --from=prod-deps /app/apps/api/node_modules ./node_modules
+COPY apps/api/src ./src
+COPY --from=prisma-client /app/apps/api/generated ./generated
+COPY --from=build-frontend /sibarifly-landing-form/dist ./static/
 
 EXPOSE 8000
 CMD [ "node", "src/index.ts"]

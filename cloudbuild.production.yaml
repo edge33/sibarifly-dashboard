@@ -36,7 +36,7 @@ steps:
       - |
         npm install -g pnpm@12.18.0
         pnpm install --frozen-lockfile
-        pnpm prisma migrate deploy
+        pnpm prisma-migrate
 
   - id: deploy
     name: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim@sha256:bcf0e21d6d66c692c78bff2ca92a459eefbf822c5a98a4de4e3287540005fe04
