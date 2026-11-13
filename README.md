@@ -45,20 +45,6 @@ pnpm test:coverage    # API tests (loads apps/api/.env.test)
 pnpm build:web        # Frontend typecheck and production build
 ```
 
-## Biome dependency updates
-
-For same-repository PRs opened by `renovate[bot]` from its
-`renovate/biomejs-biome-*` branches, GitHub Actions verifies that
-`@biomejs/biome` changed, then runs
-`pnpm biome migrate --write` and `pnpm format`, then commits any changes to the
-same PR branch. The root migration includes the app configurations, and formatting
-uses each app's own settings.
-
-The workflow reuses the `RELEASE_PLEASE_TOKEN` repository secret. It must have
-repository contents read/write access so it can push changes and trigger PR
-checks. This runs in GitHub Actions because the hosted Renovate app restricts
-post-upgrade commands.
-
 ## Container
 
 ```sh
