@@ -4,6 +4,7 @@
   "enabledManagers": ["npm", "dockerfile", "github-actions", "cloudbuild", "custom.regex"],
   "semanticCommits": "enabled",
   "automerge": false,
+  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
   "cloudbuild": {
     "managerFilePatterns": ["/(^|/)cloudbuild(?:\\.[^/]+)?\\.ya?ml$/"]
   },
