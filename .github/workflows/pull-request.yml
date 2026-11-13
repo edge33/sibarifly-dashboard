@@ -6,16 +6,55 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: pull-request-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   checks:
     runs-on: ubuntu-latest
+    env:
+      BIOME_UPDATE: >-
+        ${{ github.event.pull_request.user.login == 'renovate[bot]' &&
+            github.event.pull_request.head.repo.full_name == github.repository &&
+            startsWith(github.head_ref, 'renovate/biomejs-biome-') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: env.BIOME_UPDATE != 'true'
+
+      - name: Check out Renovate Biome branch
+        if: env.BIOME_UPDATE == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # A PAT makes the resulting commit trigger the normal PR checks.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
 
       - uses: pnpm/setup@731dfb6463bbd11c11fd0ee11fe00ed0e36d48a1 # v3
         with:
           cache: true
           require-lockfile: true
+
+      # Lockfile-only updates also need migration; package.json may be unchanged.
+      - name: Migrate Biome configuration and format project
+        if: env.BIOME_UPDATE == 'true'
+        run: |
+          pnpm biome migrate --write
+          pnpm format
+
+      - name: Commit changes to the Renovate PR
+        if: env.BIOME_UPDATE == 'true'
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git add --update
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "chore: migrate Biome configuration and format project"
+          git push origin "HEAD:$HEAD_REF"
 
       # Root scripts run application commands with apps/api as their cwd.
       - name: Generate Prisma Client
