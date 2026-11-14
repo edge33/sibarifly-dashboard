@@ -3,6 +3,15 @@
 Release Please maintains this file from Conventional Commits merged into `main`.
 Breaking changes and database deployment requirements must be described in release PRs.
 
+## [1.4.2](https://github.com/edge33/sibarifly-dashboard/compare/v1.4.1...v1.4.2) (2026-11-14)
+
+
+### Bug Fixes
+
+* format Biome lockfile updates before PR checks ([#110](https://github.com/edge33/sibarifly-dashboard/issues/110)) ([c03c751](https://github.com/edge33/sibarifly-dashboard/commit/c03c75145e935e26281d1345aac5aede4a6392ea))
+* migrate and format Renovate Biome updates ([#107](https://github.com/edge33/sibarifly-dashboard/issues/107)) ([591f8bd](https://github.com/edge33/sibarifly-dashboard/commit/591f8bd19310940e5715e53db4106c98e87fc744))
+* release runtime dependency updates ([#114](https://github.com/edge33/sibarifly-dashboard/issues/114)) ([f693bc1](https://github.com/edge33/sibarifly-dashboard/commit/f693bc1af12c9ac38f78fa0fa6d10f66a8eb1fcb))
+
 ## [1.4.1](https://github.com/edge33/sibarifly-dashboard/compare/v1.4.0...v1.4.1) (2026-11-11)
 
 
