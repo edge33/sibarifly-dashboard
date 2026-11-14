@@ -20,8 +20,18 @@
   ],
   "packageRules": [
     {
+      "matchManagers": ["npm"],
+      "matchDepTypes": ["dependencies", "optionalDependencies"],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "semanticCommitType": "fix"
+    },
+    {
       "matchPackageNames": ["pnpm"],
-      "groupName": "pnpm"
+      "groupName": "pnpm",
+      "semanticCommitType": "chore"
     }
   ]
 }
