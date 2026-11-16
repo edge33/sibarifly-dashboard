@@ -1,7 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", "docker:pinDigests", "helpers:pinGitHubActionDigests"],
-  "enabledManagers": ["npm", "dockerfile", "github-actions", "cloudbuild", "custom.regex"],
+  "enabledManagers": [
+    "npm",
+    "dockerfile",
+    "docker-compose",
+    "github-actions",
+    "cloudbuild",
+    "custom.regex"
+  ],
   "semanticCommits": "enabled",
   "automerge": false,
   "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
@@ -19,6 +26,11 @@
     }
   ],
   "packageRules": [
+    {
+      "matchManagers": ["docker-compose"],
+      "matchPackageNames": ["sibarifly-dashboard-api"],
+      "enabled": false
+    },
     {
       "matchManagers": ["npm"],
       "matchDepTypes": ["dependencies", "optionalDependencies"],
