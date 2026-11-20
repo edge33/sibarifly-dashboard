@@ -3,6 +3,20 @@
 Release Please maintains this file from Conventional Commits merged into `main`.
 Breaking changes and database deployment requirements must be described in release PRs.
 
+## [1.4.2](https://github.com/edge33/sibarifly-dashboard/compare/v1.4.1...v1.4.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @fastify/jwt to v10.2.8 ([#119](https://github.com/edge33/sibarifly-dashboard/issues/119)) ([a6f73c0](https://github.com/edge33/sibarifly-dashboard/commit/a6f73c00cb28da5bd017fb84ff8574bf588c9ff7))
+* **deps:** update dependency @fastify/static to v10.1.11 ([#112](https://github.com/edge33/sibarifly-dashboard/issues/112)) ([a8cc8ea](https://github.com/edge33/sibarifly-dashboard/commit/a8cc8eac1a07eb1296752c300e0396443f4eed78))
+* **deps:** update dependency @fastify/static to v10.1.12 ([#128](https://github.com/edge33/sibarifly-dashboard/issues/128)) ([5b53def](https://github.com/edge33/sibarifly-dashboard/commit/5b53def967401ecd227fc1b6ce72cb59ad70464c))
+* **deps:** update dependency @hookform/resolvers to v7.0.7 ([#123](https://github.com/edge33/sibarifly-dashboard/issues/123)) ([08dd3a2](https://github.com/edge33/sibarifly-dashboard/commit/08dd3a233a2adbae484b4315d1aadf7fdd58176e))
+* **deps:** update dependency react-router-dom to v7.18.6 ([#126](https://github.com/edge33/sibarifly-dashboard/issues/126)) ([46f2c40](https://github.com/edge33/sibarifly-dashboard/commit/46f2c4003e702d8f583599f864d5c8231d538073))
+* format Biome lockfile updates before PR checks ([#110](https://github.com/edge33/sibarifly-dashboard/issues/110)) ([c03c751](https://github.com/edge33/sibarifly-dashboard/commit/c03c75145e935e26281d1345aac5aede4a6392ea))
+* migrate and format Renovate Biome updates ([#107](https://github.com/edge33/sibarifly-dashboard/issues/107)) ([591f8bd](https://github.com/edge33/sibarifly-dashboard/commit/591f8bd19310940e5715e53db4106c98e87fc744))
+* release runtime dependency updates ([#114](https://github.com/edge33/sibarifly-dashboard/issues/114)) ([f693bc1](https://github.com/edge33/sibarifly-dashboard/commit/f693bc1af12c9ac38f78fa0fa6d10f66a8eb1fcb))
+
 ## [1.4.1](https://github.com/edge33/sibarifly-dashboard/compare/v1.4.0...v1.4.1) (2026-11-11)
 
 
