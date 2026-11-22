@@ -44,7 +44,7 @@ steps:
     args: [-ec, "./node_modules/.bin/prisma migrate deploy"]
 
   - id: deploy
-    name: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim@sha256:dea5e98bc972a92498e93e60571baeae560f1031d09ef25127c0535c128b07b4
+    name: gcr.io/google.com/cloudsdktool/google-cloud-cli:slim@sha256:934bb306bc5a5e103baaf1f95d39d2ccc7e8bf0c778f6450ad7574783203df3b
     entrypoint: bash
     env:
       - IMAGE=gcr.io/$PROJECT_ID/github.com/edge33/sibarifly-dashboard:$COMMIT_SHA-$BUILD_ID
