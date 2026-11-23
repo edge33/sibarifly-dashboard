@@ -1,17 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", "docker:pinDigests", "helpers:pinGitHubActionDigests"],
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
+    "customManagers:biomeVersions"
+  ],
   "enabledManagers": [
     "npm",
     "dockerfile",
     "docker-compose",
     "github-actions",
     "cloudbuild",
-    "custom.regex"
+    "custom.regex",
+    "custom.jsonata"
   ],
   "semanticCommits": "enabled",
   "automerge": false,
-  "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],
   "cloudbuild": {
     "managerFilePatterns": ["/(^|/)cloudbuild(?:\\.[^/]+)?\\.ya?ml$/"]
   },
