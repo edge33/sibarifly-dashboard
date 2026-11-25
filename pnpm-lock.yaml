@@ -209,7 +209,7 @@ importers:
         version: 7.0.1
       '@fastify/jwt':
         specifier: ^10.2.5
-        version: 10.2.8
+        version: 10.2.9
       '@fastify/static':
         specifier: ^10.1.7
         version: 10.1.12
@@ -494,8 +494,8 @@ packages:
   '@fastify/forwarded@3.1.2':
     resolution: {integrity: sha512-89WiRG+hW3VQSfCwg4Hb8b43PeyEX15K5+lEfsZ4EUth/FyOjS/lv8HsVuswUNXWiSnxMGNouE/fq/0w3VumHQ==}
 
-  '@fastify/jwt@10.2.8':
-    resolution: {integrity: sha512-JHw6aGBRr39FnHNykYeUWbvhRY7EKietGtYf+aHPRzOQuqlhub4Us4r/kze5lCB234wy+/vArlpM01SPcrPvEw==}
+  '@fastify/jwt@10.2.9':
+    resolution: {integrity: sha512-jkjTnL6MVKuSw/cyP9ax1N7gY3/ISNzvKC6hlGF2y4AU5kLN9BuI0VqNxBjnbZa3qZp+jwVFVkxhn7kYrmF//w==}
 
   '@fastify/merge-json-schemas@0.2.2':
     resolution: {integrity: sha512-d/gx9sRbUCVgGRGzma46wLcwiY8noTqO2Nmjg/vbTARxHRE5bdh5PIL8s97Lt1X7ScRWRW52eVYxwIoPwIdVUA==}
@@ -2541,7 +2541,7 @@ snapshots:
 
   '@fastify/forwarded@3.1.2': {}
 
-  '@fastify/jwt@10.2.8':
+  '@fastify/jwt@10.2.9':
     dependencies:
       '@fastify/error': 4.2.1
       '@lukeed/ms': 2.0.2
