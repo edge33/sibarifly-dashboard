@@ -211,8 +211,8 @@ importers:
         specifier: ^10.2.5
         version: 10.2.9
       '@fastify/static':
-        specifier: ^10.1.7
-        version: 10.1.12
+        specifier: ^11.0.0
+        version: 11.0.0
       '@fastify/type-provider-typebox':
         specifier: ^6.3.0
         version: 6.3.0(ajv-formats@3.0.1)(typebox@1.4.3)
@@ -508,6 +508,9 @@ packages:
 
   '@fastify/static@10.1.12':
     resolution: {integrity: sha512-D0pmf8OgurIsKiIjxC8ZJP/bCYnUSAiU6PS/se/6Me63UoliAu8FqrzDRX8FdgJMqFMXy45ISlfUZ1Gi6AJnqA==}
+
+  '@fastify/static@11.0.0':
+    resolution: {integrity: sha512-QCa8K1wesN35bBXnI0zmXJWjUoisrTtiaXJpbGBUjWH6vATzQ9B0Z4GVjmoF08N7CtLHAOvUWzpUqxrFIJBuMQ==}
 
   '@fastify/swagger-ui@6.1.5':
     resolution: {integrity: sha512-OZaIUEbuAO6rb7+j80rie/FppKmT0xlLxjBVjCaTuu3JLEnhqKxycTCPkZxH3jiVA8jLDzTrENVaANUQX/y94w==}
@@ -2570,6 +2573,16 @@ snapshots:
       mime: 3.0.0
 
   '@fastify/static@10.1.12':
+    dependencies:
+      '@fastify/accept-negotiator': 2.1.2
+      '@fastify/error': 4.2.1
+      '@fastify/send': 4.2.0
+      content-disposition: 3.0.0
+      fastify-plugin: 6.0.1
+      fastq: 1.20.3
+      glob: 14.0.3
+
+  '@fastify/static@11.0.0':
     dependencies:
       '@fastify/accept-negotiator': 2.1.2
       '@fastify/error': 4.2.1
