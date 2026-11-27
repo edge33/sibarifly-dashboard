@@ -3,6 +3,13 @@
 Release Please maintains this file from Conventional Commits merged into `main`.
 Breaking changes and database deployment requirements must be described in release PRs.
 
+## [1.4.3](https://github.com/edge33/sibarifly-dashboard/compare/v1.4.2...v1.4.3) (2026-11-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @fastify/static to v11 ([#152](https://github.com/edge33/sibarifly-dashboard/issues/152)) ([136473d](https://github.com/edge33/sibarifly-dashboard/commit/136473dd60c9ba2df836807365377c66611a5522))
+
 ## [1.4.2](https://github.com/edge33/sibarifly-dashboard/compare/v1.4.1...v1.4.2) (2026-11-27)
 
 
